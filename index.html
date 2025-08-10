@@ -23,13 +23,17 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            opacity: 0; /* 初期状態では非表示 */
-            transform: translateY(20px); /* 少し下に配置 */
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out, box-shadow 0.3s ease-in-out;
         }
         .info-card.is-visible {
             opacity: 1;
             transform: translateY(0);
+        }
+        .info-card[data-chart]:hover {
+             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+             cursor: pointer;
         }
         .info-card h3 {
             font-size: 1.25rem;
@@ -72,13 +76,12 @@
         </div>
 
         <!-- 2. かんぴょう -->
-        <div class="info-card">
+        <div class="info-card" data-chart="kanpyo">
             <h3>かんぴょう生産量シェア</h3>
-            <div class="flex flex-col items-center justify-center flex-grow">
-                <img src="https://placehold.co/300x180/f3e8d9/6b4f3a?text=かんぴょう" alt="かんぴょう" class="rounded-lg mb-4 shadow-md object-cover">
-                <p class="text-5xl font-bold text-zinc-800">98%<span class="text-2xl font-normal ml-1">以上</span></p>
-                <p class="text-center text-zinc-700 mt-2">国内生産量の圧倒的シェアを誇る。</p>
+            <div class="chart-container">
+                <canvas id="kanpyoChart"></canvas>
             </div>
+            <p class="text-center text-zinc-700 mt-4">国内生産量の9割以上を占める圧倒的シェア。</p>
             <div class="source">出典: 農林水産省統計</div>
         </div>
         
@@ -209,8 +212,8 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 animation: {
-                    duration: 1500,
-                    easing: 'easeOutQuart'
+                    duration: 1200,
+                    easing: 'easeOutCubic'
                 },
                 plugins: {
                     legend: {
@@ -220,7 +223,7 @@
             };
 
             const chartConfigs = {
-                strawberry: () => new Chart(document.getElementById('strawberryChart'), {
+                strawberry: (ctx) => new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: ['栃木県', '福岡県', '熊本県'],
@@ -232,7 +235,20 @@
                     },
                     options: { ...chartDefaultOptions, indexAxis: 'y' }
                 }),
-                barley: () => new Chart(document.getElementById('barleyChart'), {
+                kanpyo: (ctx) => new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['栃木県', 'その他'],
+                        datasets: [{
+                            data: [98, 2],
+                            backgroundColor: [newBlue, '#d4d4d8'],
+                            borderColor: '#ffffff',
+                            borderWidth: 4,
+                        }]
+                    },
+                    options: chartDefaultOptions
+                }),
+                barley: (ctx) => new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: ['栃木県', '佐賀県', '福岡県'],
@@ -244,7 +260,7 @@
                     },
                     options: chartDefaultOptions
                 }),
-                sl: () => new Chart(document.getElementById('slChart'), {
+                sl: (ctx) => new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: ['東武 SL大樹', 'JR東日本 SL銀河', 'JR西日本 SLやまぐち号'],
@@ -258,14 +274,32 @@
                 })
             };
 
+            let activeCharts = {};
+
+            document.querySelectorAll('.info-card[data-chart]').forEach(card => {
+                const chartName = card.dataset.chart;
+                const canvas = card.querySelector('canvas');
+                
+                card.addEventListener('mouseenter', () => {
+                    if (!activeCharts[chartName]) {
+                        const ctx = canvas.getContext('2d');
+                        activeCharts[chartName] = chartConfigs[chartName](ctx);
+                    }
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    if (activeCharts[chartName]) {
+                        activeCharts[chartName].destroy();
+                        delete activeCharts[chartName];
+                    }
+                });
+            });
+
+            // For initial fade-in animation of all cards
             const observer = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-visible');
-                        const chartName = entry.target.dataset.chart;
-                        if (chartName && typeof chartConfigs[chartName] === 'function') {
-                            chartConfigs[chartName]();
-                        }
                         observer.unobserve(entry.target);
                     }
                 });
