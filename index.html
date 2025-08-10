@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>栃木県 ランキング</title>
+    <title>栃木県 日本一インフォグラフィック</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,7 +56,7 @@
 </head>
 <body class="p-4 md:p-8">
 
-    <h1 class="text-3xl font-bold text-center mb-2 text-zinc-800">「ランキング」で栃木を知る</h1>
+    <h1 class="text-3xl font-bold text-center mb-2 text-zinc-800">栃木県の「ランキング」</h1>
     <p class="text-center text-zinc-600 mb-8">栃木県の10の特徴</p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -72,12 +72,13 @@
         </div>
 
         <!-- 2. かんぴょう -->
-        <div class="info-card" data-chart="kanpyo">
+        <div class="info-card">
             <h3>かんぴょう生産量シェア</h3>
-            <div class="chart-container">
-                <canvas id="kanpyoChart"></canvas>
+            <div class="flex flex-col items-center justify-center flex-grow">
+                <img src="https://placehold.co/300x180/f3e8d9/6b4f3a?text=かんぴょう" alt="かんぴょう" class="rounded-lg mb-4 shadow-md object-cover">
+                <p class="text-5xl font-bold text-zinc-800">98%<span class="text-2xl font-normal ml-1">以上</span></p>
+                <p class="text-center text-zinc-700 mt-2">国内生産量の圧倒的シェアを誇る。</p>
             </div>
-            <p class="text-center text-zinc-700 mt-4">国内生産量の9割以上を占める圧倒的シェア。</p>
             <div class="source">出典: 農林水産省統計</div>
         </div>
         
@@ -230,19 +231,6 @@
                         }]
                     },
                     options: { ...chartDefaultOptions, indexAxis: 'y' }
-                }),
-                kanpyo: () => new Chart(document.getElementById('kanpyoChart'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['栃木県', 'その他'],
-                        datasets: [{
-                            data: [98, 2],
-                            backgroundColor: [newBlue, '#d4d4d8'],
-                            borderColor: '#ffffff',
-                            borderWidth: 4,
-                        }]
-                    },
-                    options: chartDefaultOptions
                 }),
                 barley: () => new Chart(document.getElementById('barleyChart'), {
                     type: 'bar',
