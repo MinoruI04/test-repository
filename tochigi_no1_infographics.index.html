@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>栃木県 日本一インフォグラフィック</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f4f4f5; /* Zinc 100 */
+        }
+        .info-card {
+            background-color: white;
+            border: 1px solid #d4d4d8; /* Zinc 300 */
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .info-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #18181b; /* Zinc 900 */
+            text-align: center;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #2563eb; /* Blue 600 */
+            padding-bottom: 0.5rem;
+        }
+        .info-card .chart-container {
+            flex-grow: 1;
+            position: relative;
+            width: 100%;
+            min-height: 250px;
+        }
+        .info-card .source {
+            font-size: 0.75rem;
+            color: #71717a; /* Zinc 500 */
+            text-align: right;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <h1 class="text-3xl font-bold text-center mb-2 text-zinc-800">【図解】栃木県の「日本一」</h1>
+    <p class="text-center text-zinc-600 mb-8">新聞記事・資料で使えるインフォグラフィック集</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- 1. いちご -->
+        <div class="info-card">
+            <h3>いちご収穫量</h3>
+            <div class="chart-container">
+                <canvas id="strawberryChart"></canvas>
+            </div>
+            <p class="text-center text-zinc-700 mt-4">50年以上にわたり不動の1位を維持。</p>
+            <div class="source">出典: 農林水産省統計</div>
+        </div>
+
+        <!-- 2. かんぴょう -->
+        <div class="info-card">
+            <h3>かんぴょう生産量シェア</h3>
+            <div class="chart-container">
+                <canvas id="kanpyoChart"></canvas>
+            </div>
+            <p class="text-center text-zinc-700 mt-4">国内生産量の9割以上を占める圧倒的シェア。</p>
+            <div class="source">出典: 農林水産省統計</div>
+        </div>
+        
+        <!-- 3. 二条大麦 -->
+        <div class="info-card">
+            <h3>二条大麦収穫量</h3>
+            <div class="chart-container">
+                <canvas id="barleyChart"></canvas>
+            </div>
+            <p class="text-center text-zinc-700 mt-4">全国トップクラスの生産地。年により順位変動あり。</p>
+            <div class="source">出典: 農林水産省統計 (年次により変動)</div>
+        </div>
+
+        <!-- 4. 生乳 -->
+        <div class="info-card">
+            <h3>生乳生産量 (本州限定)</h3>
+            <div class="flex flex-col items-center justify-center flex-grow">
+                <div class="text-blue-600 text-6xl font-bold">1位</div>
+                <div class="text-zinc-800 text-2xl font-bold mt-2">栃木県</div>
+                <div class="text-zinc-600 mt-4">(本州の都府県において)</div>
+                <div class="w-full mt-6 p-4 bg-blue-50 rounded-lg text-center">
+                    <p class="font-bold text-blue-800">全国では北海道に次ぐ第2位</p>
+                </div>
+            </div>
+            <div class="source">出典: 農林水産省 牛乳乳製品統計</div>
+        </div>
+
+        <!-- 5. SL運行日数 -->
+        <div class="info-card">
+            <h3>SL年間運行日数</h3>
+            <div class="chart-container">
+                <canvas id="slChart"></canvas>
+            </div>
+            <p class="text-center text-zinc-700 mt-4">東武鉄道「SL大樹」が他を圧倒する運行日数。</p>
+            <div class="source">出典: 各鉄道会社公表データ</div>
+        </div>
+        
+        <!-- 6. 雷 -->
+        <div class="info-card">
+            <h3>「雷都」宇都宮</h3>
+            <div class="flex flex-col items-center justify-center flex-grow">
+                <div class="text-yellow-500 text-8xl">⚡️</div>
+                <p class="text-2xl font-bold text-zinc-800 mt-4">全国有数の雷多発地帯</p>
+                <p class="text-zinc-600 mt-2 text-center">年によっては北陸地方が上回ることもあるが、国内トップクラスの観測日数を誇る。</p>
+            </div>
+            <div class="source">出典: 気象庁統計</div>
+        </div>
+
+        <!-- 7. 餃子 -->
+        <div class="info-card">
+            <h3>餃子購入額トップ争い (年間)</h3>
+            <div class="flex items-end justify-around flex-grow pt-8">
+                <div class="text-center">
+                    <div class="text-2xl">🥈</div>
+                    <div class="w-20 h-24 bg-slate-300 flex items-center justify-center font-bold text-slate-700 rounded-t-lg">浜松市</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl">🥇</div>
+                    <div class="w-20 h-32 bg-amber-400 flex items-center justify-center font-bold text-amber-800 rounded-t-lg">宇都宮市</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-xl">🥉</div>
+                    <div class="w-20 h-20 bg-orange-400 flex items-center justify-center font-bold text-orange-800 rounded-t-lg">宮崎市</div>
+                </div>
+            </div>
+            <p class="text-center text-zinc-700 mt-4">毎年激しい首位争いを繰り広げる「餃子の街」。</p>
+            <div class="source">出典: 総務省 家計調査</div>
+        </div>
+
+        <!-- 8. もやし -->
+         <div class="info-card">
+            <h3>もやし生産量</h3>
+            <div class="flex flex-col items-center justify-center flex-grow">
+                 <div class="text-5xl text-green-600">🌱</div>
+                 <p class="text-2xl font-bold text-zinc-800 mt-4">全国トップクラスの生産地</p>
+                 <p class="text-zinc-600 mt-2 text-center">県内に大手生産工場が複数あり、国内有数の生産量を誇る。</p>
+            </div>
+            <div class="source">出典: 業界団体資料等</div>
+        </div>
+
+        <!-- 9. 自動車保有台数 -->
+        <div class="info-card">
+            <h3>1人あたり自動車保有台数</h3>
+            <div class="flex flex-col items-center justify-center flex-grow space-y-2 w-full">
+                <div class="w-full text-center p-2 bg-zinc-200 rounded font-bold">1. 群馬県</div>
+                <div class="w-full text-center p-2 bg-zinc-200 rounded font-bold">2. 富山県</div>
+                <div class="w-full text-center p-2 bg-blue-200 rounded font-bold text-blue-800">3. 栃木県</div>
+                <div class="w-full text-center p-2 bg-zinc-200 rounded font-bold">4. 福井県</div>
+                <div class="w-full text-center p-2 bg-zinc-200 rounded font-bold">5. 長野県</div>
+            </div>
+             <p class="text-center text-zinc-700 mt-4">全国トップクラスの「車社会」。</p>
+            <div class="source">出典: 自動車検査登録情報協会 (順位は年次により変動)</div>
+        </div>
+
+        <!-- 10. 電子黒板 -->
+        <div class="info-card">
+            <h3>小中学校 電子黒板整備率</h3>
+            <div class="flex flex-col justify-center flex-grow">
+                <div class="w-full">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-base font-medium text-blue-700">栃木県</span>
+                        <span class="text-sm font-medium text-blue-700">100%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-5">
+                        <div class="bg-blue-600 h-5 rounded-full" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="w-full mt-6">
+                    <div class="flex justify-between mb-1">
+                        <span class="text-base font-medium text-zinc-700">全国平均</span>
+                        <span class="text-sm font-medium text-zinc-700">約80%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-5">
+                        <div class="bg-zinc-500 h-5 rounded-full" style="width: 80%"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-zinc-700 mt-4">教育のIT活用で全国をリード。</p>
+            <div class="source">出典: 文部科学省調査</div>
+        </div>
+
+    </div>
+
+    <script>
+        const chartDefaultOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        };
+
+        // 1. いちご
+        new Chart(document.getElementById('strawberryChart'), {
+            type: 'bar',
+            data: {
+                labels: ['栃木県', '福岡県', '熊本県'],
+                datasets: [{
+                    label: '収穫量 (t)',
+                    data: [25900, 16800, 11300],
+                    backgroundColor: ['#2563eb', '#9ca3af', '#9ca3af'],
+                }]
+            },
+            options: { ...chartDefaultOptions, indexAxis: 'y' }
+        });
+
+        // 2. かんぴょう
+        new Chart(document.getElementById('kanpyoChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['栃木県', 'その他'],
+                datasets: [{
+                    data: [98, 2],
+                    backgroundColor: ['#2563eb', '#d4d4d8'],
+                    borderColor: '#ffffff',
+                    borderWidth: 4,
+                }]
+            },
+            options: chartDefaultOptions
+        });
+
+        // 3. 二条大麦
+        new Chart(document.getElementById('barleyChart'), {
+            type: 'bar',
+            data: {
+                labels: ['栃木県', '佐賀県', '福岡県'],
+                datasets: [{
+                    label: '収穫量 (t)',
+                    data: [41300, 39800, 28100],
+                    backgroundColor: ['#2563eb', '#60a5fa', '#9ca3af'],
+                }]
+            },
+            options: chartDefaultOptions
+        });
+
+        // 5. SL運行日数
+        new Chart(document.getElementById('slChart'), {
+            type: 'bar',
+            data: {
+                labels: ['東武 SL大樹', 'JR東日本 SL銀河', 'JR西日本 SLやまぐち号'],
+                datasets: [{
+                    label: '年間運行日数 (目安)',
+                    data: [300, 80, 70],
+                    backgroundColor: ['#2563eb', '#9ca3af', '#9ca3af'],
+                }]
+            },
+            options: chartDefaultOptions
+        });
+    </script>
+
+</body>
+</html>
